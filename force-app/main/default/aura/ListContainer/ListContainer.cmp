@@ -1,0 +1,5 @@
+<aura:component>
+    <aura:attribute name="data" type="Container__c[]" />
+    <aura:attribute name="columns" type="List"/>
+    
+</aura:component>	
