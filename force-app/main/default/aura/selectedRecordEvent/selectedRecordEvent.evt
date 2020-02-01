@@ -1,0 +1,4 @@
+<aura:event type="APPLICATION" description="Evento que se dispara cuando una nota o evento es seleccionado">
+    <aura:attribute name="type"  type="String"/>
+    <aura:attribute name="recordId"  type="String"/>
+</aura:event>

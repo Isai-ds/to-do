@@ -1,11 +1,8 @@
 ({
     onInit : function(component, event, helper) {
+        helper.subscribe(component,event,helper);
         helper.getColumns(component);
-        helper.getNotesLists(component,event,function(response){
-            //Si el resultado fue satifactorio agregamos los datos a la vista y así desplegue la informacion a los usuarios
-            component.set('v.data',response.getReturnValue());
-            component.find('container').set('v.isLoading',false);
-        });
+        helper.getNotesLists(component,event);
     },
     newNoteList : function (component, event, helper){
         var button = event.getSource().getLocalId();
@@ -14,8 +11,14 @@
             type = helper.NOTE_OPTION;
         }
 
-        helper.fireCreateUpdateNoteListEvent(helper.NEW_LIST_NOTE_ACTION,type);
-
-
+        helper.fireNewRecordEvent(type);
+    },    
+    getSelectedRows : function(component,event,helper){
+        var selectedRows = event.getParam('selectedRows')[0];      
+        var type = helper.LIST_OPTION;        
+        if (selectedRows.Type__c == 'Nota'){
+            type =  helper.NOTE_OPTION;
+        }
+        helper.fireSelectedRecordEvent(type,selectedRows.Id);
     }
 })

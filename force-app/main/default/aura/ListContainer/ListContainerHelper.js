@@ -11,7 +11,7 @@
             {label : 'Fecha de creación', fieldName :'CreatedDate',type : 'date-local'}
         ]);
     },
-    getNotesLists : function(component,event,callback) {
+    getNotesLists : function(component,event) {
 
         //Hacemos que aparezca un icono de carga
         component.find('container').set('v.isLoading',true);
@@ -20,7 +20,8 @@
         var action = component.get('c.getNotesLists');
         action.setCallback(this,function(response){
             if (response.getState() == 'SUCCESS'){
-                callback(response);
+                component.set('v.data',response.getReturnValue());
+                component.find('container').set('v.isLoading',false);                
             }else if (response.getState() == 'ERROR'){
                 var errors = response.getError();
                 if (errors) {
@@ -35,12 +36,43 @@
         });
         $A.enqueueAction(action);
     },
-    fireCreateUpdateNoteListEvent : function (action,type){
-        var createUpdateNoteListEvent = $A.get("e.c:cuNoteList");
-        createUpdateNoteListEvent.setParams({
+    fireSelectedRecordEvent : function (type,recordId){
+        var selectedRecordEvent = $A.get("e.c:selectedRecordEvent");
+        selectedRecordEvent.setParams({
             'type' : type,
-            'action' : action
+            'recordId' : recordId
         });
-        createUpdateNoteListEvent.fire();
+        selectedRecordEvent.fire();
+    },
+    fireNewRecordEvent : function (type){
+        var newRecordEvent = $A.get("e.c:newRecordEvent");
+        newRecordEvent.setParams({
+            'type' : type
+        });
+        newRecordEvent.fire();
+    },
+    subscribe : function(component, event, helper) {
+        // Get the empApi component
+        const empApi = component.find('empApi');        
+        empApi.setDebugFlag(true);
+
+        const channel = '/event/ContainerEvent__e';
+        // Replay option to get new events
+        const replayId = -1;
+        
+
+        empApi.subscribe(channel, replayId, $A.getCallback(eventReceived => {            
+            console.log('Received event2  ', eventReceived.data.payload.CreatedById);
+            
+            helper.getNotesLists(component,event);
+
+        }))
+        .then(subscription => {
+            // Confirm that we have subscribed to the event channel.
+            // We haven't received an event yet.
+            console.log('Subscribed to channel ', subscription.channel);
+            // Save subscription to unsubscribe later
+            component.set('v.subscription', subscription);
+        });
     }
 })

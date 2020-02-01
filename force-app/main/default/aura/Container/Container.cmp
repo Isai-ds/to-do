@@ -1,3 +1,17 @@
-<aura:component>
+<aura:component implements="flexipage:availableForAllPageTypes">
+    <aura:attribute name="showNote" type="Boolean" default="true"/>
+    <aura:attribute name="showList" type="Boolean" default="false"/>
+    <aura:handler event="c:newRecordEvent" action="{!c.handleCreationEvent}"/>
+    <aura:handler event="c:selectedRecordEvent" action="{!c.handleSelectedRecordEvent}"/>
+    <aura:if isTrue="{!v.showNote}">
+        <c:Note aura:id="note"/>
+    </aura:if>
+    <aura:if isTrue="{!v.showList}">
+        <c:Note aura:id="list" type="Lista">
+            <aura:set attribute="activities">
+                Lista ....
+            </aura:set>
+        </c:Note>
+    </aura:if>
     
 </aura:component>
