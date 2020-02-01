@@ -1,0 +1,4 @@
+<aura:event type="APPLICATION" description="Fired when an user create / edit a note or list">
+    <aura:attribute name="type" type="String"/>
+    <aura:attribute name="action" type="String"/>
+</aura:event>

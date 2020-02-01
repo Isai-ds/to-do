@@ -1,10 +1,14 @@
 ({
+    NEW_LIST_NOTE_ACTION : 'create',
+    UPDATE_LIST_NOTE_ACTION : 'update',
+    LIST_OPTION : 'list',
+    NOTE_OPTION : 'note',
     getColumns : function (component,helper){
         component.set('v.columns',[
             {label : 'Nombre', fieldName :'Name',type :'text'},
             {label : 'Tipo', fieldName :'Type__c',type :'text'},
             {label : 'Creado por', fieldName :'Owner.Name',type : 'text'},
-            {label : 'Creado por', fieldName :'Owner.Name',type : 'date-local'}
+            {label : 'Fecha de creación', fieldName :'CreatedDate',type : 'date-local'}
         ]);
     },
     getNotesLists : function(component,event,callback) {
@@ -13,7 +17,7 @@
         component.find('container').set('v.isLoading',true);
 
         //realizamos la llamada a nuestro backend para obtener las notas y listas
-        var action = component.get('c.ListController');
+        var action = component.get('c.getNotesLists');
         action.setCallback(this,function(response){
             if (response.getState() == 'SUCCESS'){
                 callback(response);
@@ -30,5 +34,13 @@
             }
         });
         $A.enqueueAction(action);
+    },
+    fireCreateUpdateNoteListEvent : function (action,type){
+        var createUpdateNoteListEvent = $A.get("e.c:cuNoteList");
+        createUpdateNoteListEvent.setParams({
+            'type' : type,
+            'action' : action
+        });
+        createUpdateNoteListEvent.fire();
     }
 })
