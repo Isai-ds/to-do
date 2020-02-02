@@ -2,7 +2,7 @@
     <aura:attribute name="data" type="Container__c[]" />
     <aura:attribute name="columns" type="List"/>
     <aura:attribute name="maxRowSelection" type="Integer" default="1" />
-    <aura:attribute name="selectedRows" type="Integer" default="1" />
+    <aura:attribute name="selectedRows" type="Integer" default="{!v.maxRowSelection}" />
 
     <aura:handler name="init" value="{! this }" action="{! c.onInit }"/>
     <lightning:empApi aura:id="empApi" />

@@ -1,0 +1,47 @@
+<aura:component implements="force:hasRecordId">
+    <aura:attribute name="data" type="Task" />
+    <aura:attribute name="edit" type="Boolean" default="false"/>
+
+    <aura:attribute name="record" type="Object"/>
+    <aura:attribute name="simpleRecord" type="Object"/>
+    <aura:attribute name="recordError" type="String"/>    
+    
+    <force:recordData aura:id="recordData"
+                    recordId="{!v.recordId}"     
+                    layoutType="FULL"
+                    targetRecord="{!v.record}"               
+                    targetFields="{!v.simpleRecord}"                    
+                    targetError="{!v.recordError}"/>
+
+    <li>
+        <fieldset class="slds-form-element slds-form-element_compound">
+            <div class="slds-form-element__control">
+                <div class="slds-form-element__row">
+                    <div class="slds-size_1-of-12">
+                        <div class="slds-form-element">
+                            <div class="slds-checkbox">
+                            <lightning:input type="checkbox" aura:id="complete" />
+                        </div>
+                        </div>
+                    </div>
+                    <div class="slds-size_9-of-12">
+                        <div class="slds-form-element">
+                            <input type="text" value="{!v.simpleRecord.Subject}" readonly="{!not(v.edit)}" class="slds-input"/>                                                           
+                        </div>                        
+                    </div>
+                    <div class="slds-size_2-of-12">
+                        
+                            <aura:if isTrue="{! not(v.edit)}">
+                                <lightning:buttonIcon aura:id="edit" iconName="utility:edit" onclick="{! c.handleSelect }" alternativeText="Modificar" />
+                                <lightning:buttonIcon aura:id="delete" iconName="utility:delete" onclick="{! c.handleSelect }" alternativeText="Eliminar" />                                
+                                <aura:set attribute="else">
+                                    <lightning:buttonIcon iconName="utility:save" onclick="{! c.save }" alternativeText="Guardar" />
+                                </aura:set>
+                            </aura:if>
+                        
+                    </div>
+                </div>                
+            </div>
+        </fieldset>
+    </li>
+</aura:component>	
