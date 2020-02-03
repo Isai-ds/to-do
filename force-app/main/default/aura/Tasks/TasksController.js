@@ -10,12 +10,14 @@
         component.set('v.data',[]);
         helper.newRecord(component);
     },
-    handleSaveTask: function(component, event, helper) {            
+    handleSaveTask: function(component, event, helper) {       
+        console.log('adding...',component.get('v.parentId'));     
         if (component.get('v.parentId') != ''){
             helper.handleSave(component,event,helper, function(){                
                 helper.saveMessage();                
             });
         }else{
+            
             helper.fireOnlyTaskEvent(component);
         }        
     },

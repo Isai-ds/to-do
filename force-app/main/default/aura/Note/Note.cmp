@@ -44,7 +44,7 @@
             </aura:if>
             
             <aura:if isTrue="{!v.type == 'Lista'}">
-                <c:Tasks user="{!v.user}"></c:Tasks>
+                <c:Tasks aura:id="tasks" user="{!v.user}"></c:Tasks>
             </aura:if>            
         </div>
     </lightning:card>    

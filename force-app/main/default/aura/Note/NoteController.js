@@ -3,7 +3,7 @@
         helper.newRecord(component,event);
         helper.getUserInfo(component);
     },
-    handleSave : function(component, event, helper) {        
+    handleSave : function(component, event, helper) {
         if (component.get('v.type')== helper.NOTE_OPTION){            
             helper.handleSave(component,event,helper,function(saveResult){
                 if (!component.get('v.recordId')){
@@ -11,12 +11,14 @@
                 }                
                 helper.publishEventNotification(component);      
             });                    
-        }else{
-            if (!component.get('v.recordId')){
-                helper.handleSave(component,event,helper,function(saveResult){                
+        }else{                        
+            if (!component.get('v.recordId')){                                
+                helper.handleSave(component,event,helper,function(saveResult){                                    
+                    component.find('tasks').set('v.parentId',saveResult.recordId);                              
+                    
                     helper.setRecordToEdit(component,saveResult.recordId);   
                     component.set('v.actionType','edit');
-                    helper.lockingContainer(component,helper,function(response){ 
+                    helper.lockingContainer(component,helper,function(response){                         
                         helper.publishEventNotification(component);                                                      
                     });
                 });    
@@ -52,10 +54,14 @@
     },
     handlerOnSaveTask : function (component,event,helper){
         if (!event.getParam('parentId')){
-            helper.handleSave(component,event,helper,function(saveResult){
-                component.set('v.recordId',saveResult.recordId);      
-                helper.setRecordToEdit(component,saveResult.recordId);  
+            helper.handleSave(component,event,helper,function(saveResult){                
                 helper.fireOnlyTaskEvent(saveResult.recordId);    
+
+                helper.setRecordToEdit(component,saveResult.recordId);  
+                component.set('v.actionType','edit');                
+                helper.lockingContainer(component,helper,function(response){                         
+                    helper.publishEventNotification(component);                                                      
+                });
             });
         }
         

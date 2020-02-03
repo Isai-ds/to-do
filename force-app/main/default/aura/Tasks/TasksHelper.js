@@ -43,7 +43,8 @@
             })
         );
     },
-    fireOnlyTaskEvent : function(component){
+    fireOnlyTaskEvent : function(){
+
         var onSaveTaskEvent = $A.get('e.c:addOnlyTaskEvent');
         onSaveTaskEvent.fire();
     },

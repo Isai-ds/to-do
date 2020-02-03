@@ -7,10 +7,9 @@
             null,      
             false,     
             $A.getCallback(function() {
-                var rec = component.get('v.record');
                 var error = component.get('v.recordError');
-                if(error || (rec === null)) {
-                    console.log('Error initializing record template: ' + error);
+                if(error) {
+                    console.log('Error initializing note / list template: ' + error);
                     return;
                 }                
             })
