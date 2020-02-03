@@ -1,12 +1,48 @@
-<aura:component controller="TaskController" implements="flexipage:availableForAllPageTypes,force:hasRecordId">
-    <aura:attribute name="recordId" type="String" default="a006g00000400PDAAY"/>
-    <aura:attribute name="data" type="Task[]" />
-    <aura:attribute name="columns" type="List"/>
-    <aura:attribute name="maxRowSelection" type="Integer" default="1" />
-    <aura:attribute name="selectedRows" type="Integer" default="{!v.maxRowSelection}" />
+<aura:component controller="TaskController" implements="flexipage:availableForAllPageTypes">
+    <aura:attribute name="parentId" type="String"/>
 
-    <aura:handler name="init" value="{! this }" action="{! c.onInit }"/>
+    <aura:attribute name="data" type="Task__c[]" />
     
+    <aura:attribute name="task" type="Object"/>
+    <aura:attribute name="simpleTask" type="Object"/>
+    <aura:attribute name="taskError" type="String"/>
+
+    <aura:handler event="c:retrieveTasksEvent" action="{!c.handleRetrieveTasksEvent}"/>
+    <aura:handler event="c:newTasksEvent" action="{!c.handleNewTasksEvent}"/>
+    <aura:handler event="c:addOnlyTaskEvent" action="{!c.handlerOnSaveTask}"/>
+
+
+    <aura:registerEvent name="onSaveTask" type="c:addOnlyTaskEvent"/>
+
+
+    <force:recordData aura:id="recordData"
+                    layoutType="FULL"
+                    targetRecord="{!v.task}"
+                    targetFields="{!v.simpleTask}"
+                    targetError="{!v.taskError}"/>
+
+                                                               
+    <div class="slds-form-element slds-form-element_compound">
+        <div class="slds-form-element__control">
+            <div class="slds-form-element__row">
+                <div class="slds-size_10-of-12">                    
+                    <lightning:input name="subject" value="{!v.simpleTask.Name}" label="Asunto" />
+                </div>
+                <div class="slds-size_2-of-12">
+                    <div class="slds-form-element" style="padding-top: 21px;">                        
+                        <lightning:buttonIcon iconName="utility:add" onclick="{! c.handleSaveTask }" alternativeText="Añadir" />
+                    </div>
+                </div>
+            </div>
+        </div>                
+    </div>
+    
+    <aura:if isTrue="{!not(empty(v.taskError))}">
+        <div class="recordError">
+            {!v.taskError}
+        </div>
+    </aura:if>
+
     <ul>
         <aura:iteration items="{!v.data}" var="value">
             <c:Task recordId = "{!value.Id}" data="{!value}"/>

@@ -14,8 +14,8 @@
         }
     },
     loadRecord : function(component,type,recordId){        
-        component.find(type).set('v.recordId',recordId);
-        component.find(type).loadRecord();         
-    },
+        console.log('recordId method',recordId);
+        component.find(type).loadRecord(recordId);         
+    }
     
 })

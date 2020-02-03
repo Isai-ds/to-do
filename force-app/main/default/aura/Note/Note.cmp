@@ -7,8 +7,12 @@
 
 
     <aura:method name="newRecord" action="{!c.newRecord}"/> 
-    <aura:method name="loadRecord" action="{!c.loadRecord}"/>
+    <aura:method name="loadRecord" action="{!c.loadRecord}">
+        <aura:attribute name="recordId" type="String"/>
+    </aura:method>
+
     <aura:handler name="init" value="{!this}" action="{!c.onInit}"/>
+    <aura:handler event="c:addOnlyTaskEvent" action="{!c.handlerOnSaveTask}"/>
 
     <force:recordData aura:id="recordData"
                     recordId="{!v.recordId}"
@@ -21,7 +25,7 @@
     
     <lightning:card aura:id="recordCard" title="Crear nueva nota"> 
         <div class="slds-p-horizontal--small">
-            <lightning:input aura:id="recordField" label="Nombre" value="{!v.simpleRecord.Name}"/>
+            <lightning:input aura:id="recordField" label="Nombre" value="{!v.simpleRecord.Name}" required="true"/>
             <lightning:textarea aura:id="recordField" label="Nota" value="{!v.simpleRecord.Comments__c}"/>
             <br/>
             <lightning:button label="Guardar" variant="brand" onclick="{!c.handleSave}"/>

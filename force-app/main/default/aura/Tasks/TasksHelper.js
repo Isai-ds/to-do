@@ -1,13 +1,4 @@
-({
-    getColumns : function (component,helper){
-        component.set('v.columns',[
-            {label : 'Asunto', fieldName :'Subject',type :'text'},
-            {label : 'Fecha de tarea', fieldName :'ActivityDate',type :'text'},
-            {label : 'Estado', fieldName :'Status',type : 'text'},
-            {label : 'Encargado', fieldName :'Owner.Name',type : 'text'},
-            {label : 'Fecha de creación', fieldName :'CreatedDate',type : 'date-local'}
-        ]);
-    },
+({    
     getTasks : function(component,event) {
 
         //Hacemos que aparezca un icono de carga
@@ -16,7 +7,7 @@
         //realizamos la llamada a nuestro backend para obtener las notas y listas
         var action = component.get('c.getTasks');
         action.setParams({
-            'recordId' : component.get('v.recordId')
+            'recordId' : component.get('v.parentId')
         });
         action.setCallback(this,function(response){
             if (response.getState() == 'SUCCESS'){
@@ -35,5 +26,50 @@
             }
         });
         $A.enqueueAction(action);
+    },
+    newRecord : function(component) {
+        component.find('recordData').getNewRecord(
+            'Task__c', 
+            null,      
+            false,     
+            $A.getCallback(function() {
+                var rec = component.get('v.task');
+                var error = component.get('v.recordError');
+                if(error || (rec === null)) {
+                    console.log('Error initializing task template: ' + error);
+                    return;
+                }
+                console.log('Task template initialized: ',rec);
+            })
+        );
+    },
+    fireOnlyTaskEvent : function(component){
+        var onSaveTaskEvent = $A.get('e.c:addOnlyTaskEvent');
+        onSaveTaskEvent.fire();
+    },
+    handleSave: function(component, event, helper,callback) {  
+        component.set('v.simpleTask.List__c', component.get('v.parentId'));
+        component.find('recordData').saveRecord($A.getCallback(function(saveResult) {
+            if (saveResult.state === 'SUCCESS' || saveResult.state === 'DRAFT') {                                
+                helper.newRecord(component);
+                if (callback){
+                    callback();             
+                }                
+            } else if (saveResult.state === 'INCOMPLETE') {
+                console.log('User is offline, device doesn\'t support drafts.');
+            } else if (saveResult.state === 'ERROR') {
+                console.log('Problem saving contact, error: ' + JSON.stringify(saveResult.error));
+            } else {
+                console.log('Unknown problem, state: ' + saveResult.state + ', error: ' + JSON.stringify(saveResult.error));
+            }
+        }));        
+    },
+    saveMessage : function (){        
+        var resultsToast = $A.get('e.force:showToast');
+        resultsToast.setParams({
+            'title': 'Guardado',
+            'message': 'La tarea sea ha agregado correctamente'
+        });
+        resultsToast.fire();
     },
 })

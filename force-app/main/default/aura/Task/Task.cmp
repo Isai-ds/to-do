@@ -1,18 +1,9 @@
-<aura:component implements="force:hasRecordId">
+<aura:component controller="TaskController" implements="force:hasRecordId">
     <aura:attribute name="data" type="Task" />
-    <aura:attribute name="edit" type="Boolean" default="false"/>
+    <aura:attribute name="edit" type="Boolean" default="false"/>    
 
-    <aura:attribute name="record" type="Object"/>
-    <aura:attribute name="simpleRecord" type="Object"/>
-    <aura:attribute name="recordError" type="String"/>    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}"/>    
     
-    <force:recordData aura:id="recordData"
-                    recordId="{!v.recordId}"     
-                    layoutType="FULL"
-                    targetRecord="{!v.record}"               
-                    targetFields="{!v.simpleRecord}"                    
-                    targetError="{!v.recordError}"/>
-
     <li>
         <fieldset class="slds-form-element slds-form-element_compound">
             <div class="slds-form-element__control">
@@ -20,13 +11,15 @@
                     <div class="slds-size_1-of-12">
                         <div class="slds-form-element">
                             <div class="slds-checkbox">
-                            <lightning:input type="checkbox" aura:id="complete" />
-                        </div>
+                                <aura:if isTrue="{!v.edit}">
+                                    <lightning:input type="checkbox" aura:id="status"/>
+                                </aura:if>                                
+                            </div>
                         </div>
                     </div>
-                    <div class="slds-size_9-of-12">
+                    <div class="slds-size_9-of-12">                        
                         <div class="slds-form-element">
-                            <input type="text" value="{!v.simpleRecord.Subject}" readonly="{!not(v.edit)}" class="slds-input"/>                                                           
+                            <input type="text" aura:id="subject" value="{!v.data.Name}" readonly="{!not(v.edit)}" class="slds-input"/>                                                           
                         </div>                        
                     </div>
                     <div class="slds-size_2-of-12">
@@ -36,6 +29,7 @@
                                 <lightning:buttonIcon aura:id="delete" iconName="utility:delete" onclick="{! c.handleSelect }" alternativeText="Eliminar" />                                
                                 <aura:set attribute="else">
                                     <lightning:buttonIcon iconName="utility:save" onclick="{! c.save }" alternativeText="Guardar" />
+                                    <lightning:buttonIcon iconName="utility:close" onclick="{! c.close }" alternativeText="Cerrar" />                                    
                                 </aura:set>
                             </aura:if>
                         

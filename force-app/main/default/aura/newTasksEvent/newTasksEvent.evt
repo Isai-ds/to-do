@@ -1,0 +1,1 @@
+<aura:event type="APPLICATION" description="Se dispara cuando el usuario creara una nueva lista"/>

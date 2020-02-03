@@ -1,0 +1,3 @@
+<aura:event type="APPLICATION" description="Evento que se dispara cuando el usuario selecciona una lista">
+    <aura:attribute name="parentId" type="String" />
+</aura:event>

@@ -1,0 +1,3 @@
+<aura:event type="APPLICATION" description="Se dispara cuando el usuario agrega una tarea sin a ver guardado la lista">
+    <aura:attribute name="parentId" type="String"/>
+</aura:event>

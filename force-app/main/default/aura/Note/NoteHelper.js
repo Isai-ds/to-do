@@ -1,5 +1,7 @@
 ({
-    newRecord : function(component,event) {
+    NOTE_OPTION : 'Nota',
+    LIST_OPTION : 'Lista',
+    newRecord : function(component,helper) {
         component.find('recordData').getNewRecord(
             'Container__c', 
             null,      
@@ -11,18 +13,27 @@
                     console.log('Error initializing record template: ' + error);
                     return;
                 }
-                console.log('Record template initialized: ',rec);
+                if (component.get('v.type')== helper.LIST_OPTION){
+                    helper.fireNewTasksEvent();
+                }
             })
         );
     },
-    handleSave: function(component, event, helper) {  
+    reloadRecord : function(component,helper) {
+        component.find('recordData').reloadRecord(false,$A.getCallback(function(){
+            if (component.get('v.type')== helper.LIST_OPTION){
+                helper.fireRetrieveTasksEvent(component.get('v.recordId'));
+            }
+        }));
+    },
+    handleSave: function(component, event, helper,callback) {  
         component.set('v.simpleRecord.Type__c', component.get('v.type'));
       
         component.find('recordData').saveRecord($A.getCallback(function(saveResult) {
             if (saveResult.state === 'SUCCESS' || saveResult.state === 'DRAFT') {                
                 helper.saveMessage(component,event);
                 helper.publishEventNotification(component);
-                helper.isNewRecord(component,helper);                
+                callback(saveResult);                
             } else if (saveResult.state === 'INCOMPLETE') {
                 console.log('User is offline, device doesn\'t support drafts.');
             } else if (saveResult.state === 'ERROR') {
@@ -34,7 +45,7 @@
     },
     isNewRecord : function (component,helper){
         if (!component.get('v.recordId')){
-            helper.newRecord(component);            
+            helper.newRecord(component,helper);            
         }        
     },
     publishEventNotification : function (component){
@@ -61,5 +72,27 @@
             'message': 'La nota fue guardado correctamente'
         });
         resultsToast.fire();
+    },
+    fireRetrieveTasksEvent : function(recordId){        
+        var retrieveTasksEvent = $A.get('e.c:retrieveTasksEvent');
+        retrieveTasksEvent.setParams({
+            'parentId' : recordId
+        });
+        retrieveTasksEvent.fire();
+    },    
+    fireNewTasksEvent : function(recordId){        
+        var newTasksEvent = $A.get('e.c:newTasksEvent');        
+        newTasksEvent.fire();
+    },
+    fireOnlyTaskEvent : function(parentId){
+        var onSaveTaskEvent = $A.get('e.c:addOnlyTaskEvent');
+        onSaveTaskEvent.setParams({
+            'parentId' : parentId
+        });
+        onSaveTaskEvent.fire();
+    },
+    setRecordToEdit : function (component, recordId){
+        component.set('v.recordId',recordId);
+        component.find('recordCard').set('v.title','Modificar '+component.get('v.type').toLowerCase());
     }
 })
