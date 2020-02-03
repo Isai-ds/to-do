@@ -4,6 +4,7 @@
     <aura:attribute name="recordError" type="String"/>
     <aura:attribute name="type" type="String" default="Nota"/>
     <aura:attribute name="activities" type="Aura.Component[]"/>
+    <aura:attribute name="user" type="User"/>
 
 
     <aura:method name="newRecord" action="{!c.newRecord}"/> 
@@ -30,7 +31,11 @@
             <br/>
             <lightning:button label="Guardar" variant="brand" onclick="{!c.handleSave}"/>
 
-            {!v.activities}
+            <aura:if isTrue="{!v.type == 'Lista'}">
+                <c:Tasks user="{!v.user}"></c:Tasks>
+            </aura:if>
+            
+
         </div>
 
     </lightning:card>

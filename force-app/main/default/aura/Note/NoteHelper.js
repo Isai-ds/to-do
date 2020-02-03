@@ -94,5 +94,26 @@
     setRecordToEdit : function (component, recordId){
         component.set('v.recordId',recordId);
         component.find('recordCard').set('v.title','Modificar '+component.get('v.type').toLowerCase());
-    }
+    },
+    getUserInfo : function(component) {            
+        //realizamos la llamada a nuestro backend para obtener las notas y listas
+        var action = component.get('c.getCurrentUser');
+        action.setCallback(this,function(response){
+            if (response.getState() == 'SUCCESS'){
+                component.set('v.user',response.getReturnValue());      
+                console.log('user->',response.getReturnValue());
+            }else if (response.getState() == 'ERROR'){
+                var errors = response.getError();
+                if (errors) {
+                    if (errors[0] && errors[0].message) {
+                        console.log("Error user message: " + 
+                                 errors[0].message);
+                    }
+                } else {
+                    console.log("Unknown error");
+                }
+            }
+        });
+        $A.enqueueAction(action);
+    },
 })

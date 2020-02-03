@@ -6,7 +6,7 @@ public with sharing class ListController {
     }
 
     @AuraEnabled
-    public User getUser(){
+    public static User getCurrentUser(){
         return [SELECT Id, Name FROM User WHERE Id =: UserInfo.getUserId()];
     }
 }

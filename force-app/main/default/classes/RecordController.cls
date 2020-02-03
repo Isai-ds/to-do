@@ -5,4 +5,8 @@ public with sharing class RecordController {
         ContainerEvent__e event = new ContainerEvent__e();
         List<Database.SaveResult> results = EventBus.publish(new List<ContainerEvent__e>{event});
     }
+    @AuraEnabled
+    public static User getCurrentUser(){
+        return ListController.getCurrentUser();
+    }
 }

@@ -13,8 +13,7 @@
             component.set('v.showNote',false);                            
         }
     },
-    loadRecord : function(component,type,recordId){        
-        console.log('recordId method',recordId);
+    loadRecord : function(component,type,recordId){
         component.find(type).loadRecord(recordId);         
     }
     

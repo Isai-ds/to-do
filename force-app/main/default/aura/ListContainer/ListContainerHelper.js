@@ -11,7 +11,7 @@
             {label : 'Fecha de creación', fieldName :'CreatedDate',type : 'date-local'}
         ]);
     },
-    getNotesLists : function(component,event) {
+    getNotesLists : function(component) {
 
         //Hacemos que aparezca un icono de carga
         component.find('container').set('v.isLoading',true);
@@ -36,6 +36,26 @@
         });
         $A.enqueueAction(action);
     },
+    getUserInfo : function(component) {            
+        //realizamos la llamada a nuestro backend para obtener las notas y listas
+        var action = component.get('c.getCurrentUser');
+        action.setCallback(this,function(response){
+            if (response.getState() == 'SUCCESS'){
+                component.set('v.user',response.getReturnValue());                
+            }else if (response.getState() == 'ERROR'){
+                var errors = response.getError();
+                if (errors) {
+                    if (errors[0] && errors[0].message) {
+                        console.log("Error user message: " + 
+                                 errors[0].message);
+                    }
+                } else {
+                    console.log("Unknown error");
+                }
+            }
+        });
+        $A.enqueueAction(action);
+    },
     fireSelectedRecordEvent : function (type,recordId){
         var selectedRecordEvent = $A.get("e.c:selectedRecordEvent");
         selectedRecordEvent.setParams({
@@ -47,7 +67,7 @@
     fireNewRecordEvent : function (type){
         var newRecordEvent = $A.get("e.c:newRecordEvent");
         newRecordEvent.setParams({
-            'type' : type
+            'type' : type            
         });
         newRecordEvent.fire();
     },

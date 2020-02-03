@@ -1,6 +1,7 @@
 ({    
     onInit : function(component, event, helper) {
         helper.newRecord(component,event);
+        helper.getUserInfo(component);
     },
     handleSave : function(component, event, helper) {
         helper.handleSave(component,event,helper,function(saveResult){
@@ -34,5 +35,5 @@
             });
         }
         
-    }
+    },
 })

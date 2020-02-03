@@ -7,11 +7,7 @@
         <c:Note aura:id="note"/>
     </aura:if>
     <aura:if isTrue="{!v.showList}">
-        <c:Note aura:id="list" type="Lista">
-            <aura:set attribute="activities">
-                <c:Tasks></c:Tasks>
-            </aura:set>
-        </c:Note>
+        <c:Note aura:id="list" type="Lista"/>
     </aura:if>
     
 </aura:component>

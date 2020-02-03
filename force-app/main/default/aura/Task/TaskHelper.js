@@ -5,15 +5,13 @@
     ACTION_EDIT : 'edit',
     ACTION_READ_ONLY : 'read',
     checkStatus : function(component,helper,type){
-        var task = component.get('v.data');
-        
-
+        var task = component.get('v.data');        
         if (type == helper.ACTION_EDIT){            
             component.find('status').set('v.checked',task.Status__c == helper.STATUS_IN_PROGRESS ? false : true);            
             $A.util.removeClass(component.find('subject'), 'done');
         }else if (type == helper.ACTION_READ_ONLY){
-            
-            $A.util.addClass(component.find('subject'), 'done');
+            if (task.Status__c == helper.STATUS_DONE)
+                $A.util.addClass(component.find('subject'), 'done');
         }
     },
     getTask : function(component,event,helper,callback) {

@@ -1,7 +1,7 @@
 <aura:component controller="TaskController" implements="flexipage:availableForAllPageTypes">
     <aura:attribute name="parentId" type="String"/>
-
     <aura:attribute name="data" type="Task__c[]" />
+    <aura:attribute name="user" type="User" /> 
     
     <aura:attribute name="task" type="Object"/>
     <aura:attribute name="simpleTask" type="Object"/>
@@ -13,7 +13,6 @@
 
 
     <aura:registerEvent name="onSaveTask" type="c:addOnlyTaskEvent"/>
-
 
     <force:recordData aura:id="recordData"
                     layoutType="FULL"
@@ -45,7 +44,7 @@
 
     <ul>
         <aura:iteration items="{!v.data}" var="value">
-            <c:Task recordId = "{!value.Id}" data="{!value}"/>
+            <c:Task user = "{!v.user}" recordId = "{!value.Id}" data="{!value}"/>
         </aura:iteration>
     </ul>
 </aura:component>	
