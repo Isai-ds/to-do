@@ -2,8 +2,8 @@
     onInit : function(component, event, helper) {
         helper.subscribe(component,event,helper);
         helper.getColumns(component);
-        helper.getNotesLists(component);
         helper.getUserInfo(component);
+        helper.getNotesLists(component,helper);
     },
     newNoteList : function (component, event, helper){
         var button = event.getSource().getLocalId();

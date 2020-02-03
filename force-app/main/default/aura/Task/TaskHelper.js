@@ -14,14 +14,23 @@
                 $A.util.addClass(component.find('subject'), 'done');
         }
     },
-    getTask : function(component,helper,callback) {
+    lockingTask : function(component,helper,callback) {
         var action = component.get('c.lockingTask');
         action.setParams({
             'recordId' : component.get('v.recordId')
         });
         action.setCallback(this, $A.getCallback(function(response){
-            if (response.getState() == 'SUCCESS'){                
-                callback(response);               
+            if (response.getState() == 'SUCCESS'){       
+                console.log('locking...',response.getReturnValue());                
+                var result = response.getReturnValue();
+                component.set('v.data',result.task);                 
+                if (result.isBlocked){
+                    helper.lockMessage(result.LastBlockedBy.Name);
+                }else{
+                    if (callback){
+                        callback(response);               
+                    }                    
+                }                         
             }else if (response.getState() == 'ERROR'){
                 var errors = response.getError();
                 if (errors) {
@@ -36,24 +45,24 @@
         }));
         $A.enqueueAction(action);
     },
-    saveSubject : function(component,helper) {
-        var action = component.get('c.setSubject');        
+    saveTask : function(component,helper) {
+        var action = component.get('c.saveTask');        
         var subject = component.find('subject').getElement().value;        
-        
+        var status = component.find('status').get('v.checked') ? helper.STATUS_DONE : helper.STATUS_IN_PROGRESS;
         action.setParams({
             'recordId' : component.get('v.recordId'),
-            'subject' : subject
+            'subject' : subject,
+            'status' : status
         });
         action.setCallback(this, $A.getCallback(function(response){
             if (response.getState() == 'SUCCESS'){
-                component.get('v.data').Name = subject;
-                helper.saveMessage();
+                component.set('v.data',response.getReturnValue());
+                helper.saveMessage('Actualización', 'La tarea se actualizó correctamente');
             }else if (response.getState() == 'ERROR'){
                 var errors = response.getError();
                 if (errors) {
                     if (errors[0] && errors[0].message) {
-                        console.log("Error message: " + 
-                                 errors[0].message);
+                        console.log("Error message saving task: " + errors[0].message);
                     }
                 } else {
                     console.log("Unknown error");
@@ -62,11 +71,32 @@
         }));
         $A.enqueueAction(action);
     },
-    saveMessage : function (){        
+    deleteTask : function(component,helper) {
+        var action = component.get('c.deleteTask');                
+        action.setParams({
+            'recordId' : component.get('v.recordId')
+        });
+        action.setCallback(this, $A.getCallback(function(response){
+            if (response.getState() == 'SUCCESS'){                
+                helper.saveMessage('Eliminación','La tarea se eliminó correctamente');
+            }else if (response.getState() == 'ERROR'){
+                var errors = response.getError();
+                if (errors) {
+                    if (errors[0] && errors[0].message) {
+                        console.log("Error message delete task: " + errors[0].message);
+                    }
+                } else {
+                    console.log("Unknown error");
+                }
+            }
+        }));
+        $A.enqueueAction(action);
+    },
+    saveMessage : function (title,message){        
         var resultsToast = $A.get('e.force:showToast');
         resultsToast.setParams({
-            'title': 'Guardado',
-            'message': 'La tarea se guardo correctamente',
+            'title': title,
+            'message': message,
             'type' : 'success'
         });
         resultsToast.fire();
@@ -84,29 +114,6 @@
     editTask :  function(component,helper){
         component.set('v.edit',true);
         helper.checkStatus(component,helper,helper.ACTION_EDIT);
-    },
-    unlockTask : function(component,helper,callback) {
-        var action = component.get('c.unlockTask');
-        action.setParams({
-            'recordId' : component.get('v.recordId')
-        });
-        action.setCallback(this, $A.getCallback(function(response){
-            if (response.getState() == 'SUCCESS'){                
-                component.set('v.data',response.getReturnValue());
-                callback();
-            }else if (response.getState() == 'ERROR'){
-                var errors = response.getError();
-                if (errors) {
-                    if (errors[0] && errors[0].message) {
-                        console.log("Error message: " + 
-                                 errors[0].message);
-                    }
-                } else {
-                    console.log("Unknown error");
-                }
-            }
-        }));
-        $A.enqueueAction(action);
-    },
+    }
     
 })

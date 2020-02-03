@@ -5,13 +5,37 @@
     NOTE_OPTION : 'note',
     getColumns : function (component,helper){
         component.set('v.columns',[
-            {label : 'Nombre', fieldName :'Name',type :'text'},
+            {label : 'Nombre', fieldName :'Name',type :'text',
+                cellAttributes: {
+                    iconName : {
+                        fieldName:'statusRecordIcon'
+                    },
+                    iconPosition : 'left',
+                    iconAlternativeText : {
+                        fieldName:'tooltipRecordIcon'
+                    }
+                }
+            },
             {label : 'Tipo', fieldName :'Type__c',type :'text'},
-            {label : 'Creado por', fieldName :'Owner.Name',type : 'text'},
+            {label : 'Creado por', fieldName :'OwnerName',type : 'text'},
             {label : 'Fecha de creación', fieldName :'CreatedDate',type : 'date-local'}
         ]);
     },
-    getNotesLists : function(component) {
+    setData : function(component,helper, records){
+        records.forEach(function(record){
+            record.OwnerName = record.Owner.Name;
+            helper.getIcon(component,record);
+        });
+        component.set('v.data',records);
+    },
+    getIcon : function(component,record) {
+        if (record.isBlocked__c){      
+            console.log(component.get('v.user'));  
+            record.statusRecordIcon =  component.get('v.user').Id == record.LastBlockedBy__c ? 'utility:reminder' : 'utility:resource_absence';
+            record.tooltipRecordIcon = 'El usuario '+record.LastBlockedBy__r.Name+' se encuentra modificando la '+record.Type__c+'. Espere a que el usuario termine';
+        }              
+    },
+    getNotesLists : function(component,helper) {
 
         //Hacemos que aparezca un icono de carga
         component.find('container').set('v.isLoading',true);
@@ -20,7 +44,7 @@
         var action = component.get('c.getNotesLists');
         action.setCallback(this,function(response){
             if (response.getState() == 'SUCCESS'){
-                component.set('v.data',response.getReturnValue());
+                helper.setData(component,helper,response.getReturnValue());
                 component.find('container').set('v.isLoading',false);                
             }else if (response.getState() == 'ERROR'){
                 var errors = response.getError();
@@ -46,8 +70,7 @@
                 var errors = response.getError();
                 if (errors) {
                     if (errors[0] && errors[0].message) {
-                        console.log("Error user message: " + 
-                                 errors[0].message);
+                        console.log("Error user message: " + errors[0].message);
                     }
                 } else {
                     console.log("Unknown error");

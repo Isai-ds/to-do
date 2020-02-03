@@ -25,10 +25,10 @@
     <lightning:card aura:id="recordCard" title="Crear nueva nota"> 
         <aura:set attribute="actions">
             <aura:if isTrue="{! v.actionType == 'read'}">
-                <lightning:button label="Modificar" onclick="{!c.handleEdit}"/>
+                <lightning:button label="Modificar" onclick="{!c.handleEdit}" iconName="utility:edit"/>
             </aura:if>            
-            <aura:if isTrue="{!v.type == 'Lista'}">
-                <lightning:button label="Compartir"/>
+            <aura:if isTrue="{!and(v.actionType == 'edit',v.type == 'Lista')}">
+                <lightning:button label="Compartir" iconName = "utility:share"/>
             </aura:if>
         </aura:set>
         <div class="slds-p-horizontal--small">
@@ -37,10 +37,11 @@
             <br/>
 
             <aura:if isTrue="{! v.actionType == 'new' || v.actionType == 'edit'}">
-                <lightning:button label="Guardar" variant="brand" onclick="{!c.handleSave}"/>
+                <lightning:button iconName="utility:save" label="Guardar" variant="brand" onclick="{!c.handleSave}"/>
             </aura:if>
             <aura:if isTrue="{! v.actionType == 'edit'}">
-                <lightning:button label="Finalizar" variant="brand" onclick="{!c.handleFinish}"/>
+                <lightning:button label="Eliminar" variant="destructive" iconName="utility:delete" onclick="{!c.handleDelete}"/>
+                <lightning:button label="Finalizar" variant="success" iconName="utility:close"  onclick="{!c.handleFinish}"/>                
             </aura:if>
             
             <aura:if isTrue="{!v.type == 'Lista'}">

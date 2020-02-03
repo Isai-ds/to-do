@@ -30,7 +30,7 @@
       
         component.find('recordData').saveRecord($A.getCallback(function(saveResult) {
             if (saveResult.state === 'SUCCESS' || saveResult.state === 'DRAFT') {                
-                helper.saveMessage(component,event);  
+                helper.saveMessage('Actualización','La '+component.get('v.type').toLowerCase()+ ' se ha actualizado correctamente');  
                 if (callback){
                     callback(saveResult);                    
                 }                                          
@@ -43,6 +43,19 @@
             }
         }));        
     },    
+    handleDelete: function(component, event, helper) {
+        component.find('recordData').deleteRecord($A.getCallback(function(deleteResult) {        
+            if (deleteResult.state === 'SUCCESS' || deleteResult.state === 'DRAFT') {                
+                console.log('Record is deleted.');
+            } else if (deleteResult.state === 'INCOMPLETE') {
+                console.log('User is offline, device doesn\'t support drafts.');
+            } else if (deleteResult.state === 'ERROR') {
+                console.log('Problem deleting record, error: ' + JSON.stringify(deleteResult.error));
+            } else {
+                console.log('Unknown problem, state: ' + deleteResult.state + ', error: ' + JSON.stringify(deleteResult.error));
+            }
+        }));
+    },
     publishEventNotification : function (component){
         var action = component.get('c.publishRecordCreation');
         action.setCallback(this,$A.getCallback(function(response) {
@@ -50,21 +63,22 @@
                 var errors = response.getError();
                 if (errors) {
                     if (errors[0] && errors[0].message) {
-                        console.log("Error message: " + 
+                        console.log('Error message: ' + 
                                  errors[0].message);
                     }
                 } else {
-                    console.log("Unknown error");
+                    console.log('Unknown error');
                 }
             }
         }));
         $A.enqueueAction(action);
     },
-    saveMessage : function (component,event){        
+    saveMessage : function (title,message){        
         var resultsToast = $A.get('e.force:showToast');
         resultsToast.setParams({
-            'title': 'Guardado',
-            'message': 'La nota fue guardado correctamente'
+            'title': title,
+            'message': message,
+            'type' : 'success'
         });
         resultsToast.fire();
     },
@@ -101,11 +115,11 @@
                 var errors = response.getError();
                 if (errors) {
                     if (errors[0] && errors[0].message) {
-                        console.log("Error user message: " + 
+                        console.log('Error user message: ' + 
                                  errors[0].message);
                     }
                 } else {
-                    console.log("Unknown error");
+                    console.log('Unknown error');
                 }
             }
         });
@@ -123,11 +137,11 @@
                 var errors = response.getError();
                 if (errors) {
                     if (errors[0] && errors[0].message) {
-                        console.log("Error message: " + 
+                        console.log('Error message: ' + 
                                  errors[0].message);
                     }
                 } else {
-                    console.log("Unknown error");
+                    console.log('Unknown error');
                 }
             }
         }));
@@ -155,11 +169,11 @@
                 var errors = response.getError();
                 if (errors) {
                     if (errors[0] && errors[0].message) {
-                        console.log("Error message: " + 
+                        console.log('Error message: ' + 
                                  errors[0].message);
                     }
                 } else {
-                    console.log("Unknown error");
+                    console.log('Unknown error');
                 }
             }
         }));
@@ -178,5 +192,10 @@
                 callback(result);
             }
         });    
+    },
+    deleteRecordPostAction : function(component,helper,parameters){
+        console.log('parameters',parameters);
+        console.log('record deleted',component.get('v.recordId'));
+        
     }
 })

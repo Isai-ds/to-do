@@ -16,8 +16,8 @@ public with sharing class RecordController {
         Container__c record = getRecord(recordId);
         result.put('isBlocked',true);         
 
-        if (timeUnlockConatiner(record)){
-            unlockContainer(record.Id);            
+        if (timeUnlockRecord(record)){
+            unlockRecord(record);            
         }
         if (String.isBlank(record.LastBlockedBy__c)){
             lockContainer(record);
@@ -29,7 +29,7 @@ public with sharing class RecordController {
         
         return result;
     }
-    private static Boolean timeUnlockConatiner (Container__c record){ 
+    private static Boolean timeUnlockRecord (Container__c record){ 
         System.debug('t.LastBlockedDate__c->'+record.LastBlockedDate__c);
         Boolean unlock = false;
         if (record.LastBlockedDate__c != null){
@@ -46,14 +46,19 @@ public with sharing class RecordController {
         record.LastBlockedDate__c = System.DateTime.now();
         update record;
     }
+    private static void unlockRecord (Container__c record){
+        System.debug('unlocking...'+record.Id);        
+        record.LastBlockedBy__c = null;
+        record.LastBlockedDate__c = null;
+        update record; 
+    }
 
     @AuraEnabled        
     public static void unlockContainer (String recordId){
-        System.debug('unlocking...'+recordId);
-        Container__c record = new Container__c(Id=recordId);     
-        record.LastBlockedBy__c = null;
-        record.LastBlockedDate__c = null;
-        update record;                
+        Container__c record = getRecord(recordId);
+        if (record.LastBlockedBy__c == UserInfo.getUserId() && !timeUnlockRecord(record)){
+            unlockRecord (record);
+        }                     
     }
 
     private static Container__c getRecord (String recordId){

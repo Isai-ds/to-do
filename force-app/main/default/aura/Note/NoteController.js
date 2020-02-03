@@ -50,7 +50,9 @@
         if(eventParams.changeType === "CHANGED") {
             var changedFields = eventParams.changedFields;
             console.log('Fields that are changed: ' + JSON.stringify(changedFields));            
-        }
+        }else if(eventParams.changeType === 'REMOVED') {
+            helper.deleteRecordPostAction(component,helper,eventParams);
+        } 
     },
     handlerOnSaveTask : function (component,event,helper){
         if (!event.getParam('parentId')){
@@ -78,5 +80,10 @@
             component.set('v.actionType','read');        
         });
         
+    },    
+    handleDelete : function (component,event,helper){                        
+        helper.checkingContainer(component,helper,function(result){                
+                            
+        });                    
     },
 })
