@@ -16,8 +16,7 @@
             helper.handleSave(component,event,helper, function(){                
                 helper.saveMessage();                
             });
-        }else{
-            
+        }else{          
             helper.fireOnlyTaskEvent(component);
         }        
     },

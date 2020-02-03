@@ -2,6 +2,7 @@
     <aura:attribute name="parentId" type="String"/>
     <aura:attribute name="data" type="Task__c[]" />
     <aura:attribute name="user" type="User" /> 
+    <aura:attribute name="actionType" type="String" default="edit"/>
     
     <aura:attribute name="task" type="Object"/>
     <aura:attribute name="simpleTask" type="Object"/>
@@ -25,11 +26,11 @@
         <div class="slds-form-element__control">
             <div class="slds-form-element__row">
                 <div class="slds-size_10-of-12">                    
-                    <lightning:input name="subject" value="{!v.simpleTask.Name}" label="Asunto" />
+                    <lightning:input name="subject" value="{!v.simpleTask.Name}" label="Asunto" readonly="{!v.actionType == 'read'}"/>
                 </div>
                 <div class="slds-size_2-of-12">
                     <div class="slds-form-element" style="padding-top: 21px;">                        
-                        <lightning:buttonIcon iconName="utility:add" onclick="{! c.handleSaveTask }" alternativeText="Añadir" />
+                        <lightning:buttonIcon iconName="utility:add" onclick="{! c.handleSaveTask }" alternativeText="Añadir" disabled="{!v.actionType == 'read'}"/>
                     </div>
                 </div>
             </div>
@@ -44,7 +45,7 @@
 
     <ul>
         <aura:iteration items="{!v.data}" var="value">
-            <c:Task user = "{!v.user}" recordId = "{!value.Id}" data="{!value}"/>
+            <c:Task user = "{!v.user}" recordId = "{!value.Id}" data="{!value}" actionType="{!v.actionType}"/>
         </aura:iteration>
     </ul>
 </aura:component>	

@@ -50,6 +50,7 @@
     },
     handleSave: function(component, event, helper,callback) {  
         component.set('v.simpleTask.List__c', component.get('v.parentId'));
+        component.set('v.simpleTask.Status__c', 'En progreso');
         component.find('recordData').saveRecord($A.getCallback(function(saveResult) {
             if (saveResult.state === 'SUCCESS' || saveResult.state === 'DRAFT') {                                
                 helper.newRecord(component);
