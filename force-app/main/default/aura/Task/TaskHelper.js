@@ -14,15 +14,14 @@
                 $A.util.addClass(component.find('subject'), 'done');
         }
     },
-    getTask : function(component,event,helper,callback) {
-        var action = component.get('c.getTask');
+    getTask : function(component,helper,callback) {
+        var action = component.get('c.lockingTask');
         action.setParams({
             'recordId' : component.get('v.recordId')
         });
         action.setCallback(this, $A.getCallback(function(response){
-            if (response.getState() == 'SUCCESS'){
-                component.set('v.data',response.getReturnValue()); 
-                callback();               
+            if (response.getState() == 'SUCCESS'){                
+                callback(response);               
             }else if (response.getState() == 'ERROR'){
                 var errors = response.getError();
                 if (errors) {
@@ -47,7 +46,7 @@
         });
         action.setCallback(this, $A.getCallback(function(response){
             if (response.getState() == 'SUCCESS'){
-                component.get('v.data').Subject__c = subject;
+                component.get('v.data').Name = subject;
                 helper.saveMessage();
             }else if (response.getState() == 'ERROR'){
                 var errors = response.getError();
@@ -67,8 +66,47 @@
         var resultsToast = $A.get('e.force:showToast');
         resultsToast.setParams({
             'title': 'Guardado',
-            'message': 'La tarea se guardo correctamente'
+            'message': 'La tarea se guardo correctamente',
+            'type' : 'success'
         });
         resultsToast.fire();
-    }
+    },
+    lockMessage : function (userName){        
+        var resultsToast = $A.get('e.force:showToast');
+        resultsToast.setParams({
+            'title': 'Tarea bloqueada',
+            'message': 'La tarea se esta modificando por '+userName+'. Espere a que el usuario termine',
+            'type' : 'warning'
+
+        });
+        resultsToast.fire();
+    },
+    editTask :  function(component,helper){
+        component.set('v.edit',true);
+        helper.checkStatus(component,helper,helper.ACTION_EDIT);
+    },
+    unlockTask : function(component,helper,callback) {
+        var action = component.get('c.unlockTask');
+        action.setParams({
+            'recordId' : component.get('v.recordId')
+        });
+        action.setCallback(this, $A.getCallback(function(response){
+            if (response.getState() == 'SUCCESS'){                
+                component.set('v.data',response.getReturnValue());
+                callback();
+            }else if (response.getState() == 'ERROR'){
+                var errors = response.getError();
+                if (errors) {
+                    if (errors[0] && errors[0].message) {
+                        console.log("Error message: " + 
+                                 errors[0].message);
+                    }
+                } else {
+                    console.log("Unknown error");
+                }
+            }
+        }));
+        $A.enqueueAction(action);
+    },
+    
 })

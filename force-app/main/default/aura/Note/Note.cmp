@@ -1,11 +1,11 @@
-<aura:component controller="RecordController" implements="force:hasRecordId">
+<aura:component controller="RecordController" implements="force:hasRecordId">    
+    <aura:attribute name="type" type="String" default="Nota"/>
+    <aura:attribute name="user" type="User"/>
+    <aura:attribute name="actionType" type="String" default="new"/>    
+
     <aura:attribute name="record" type="Object"/>
     <aura:attribute name="simpleRecord" type="Object"/>
     <aura:attribute name="recordError" type="String"/>
-    <aura:attribute name="type" type="String" default="Nota"/>
-    <aura:attribute name="activities" type="Aura.Component[]"/>
-    <aura:attribute name="user" type="User"/>
-
 
     <aura:method name="newRecord" action="{!c.newRecord}"/> 
     <aura:method name="loadRecord" action="{!c.loadRecord}">
@@ -17,30 +17,37 @@
 
     <force:recordData aura:id="recordData"
                     recordId="{!v.recordId}"
-                    layoutType="FULL"
-                    targetRecord="{!v.record}"
-                    targetFields="{!v.simpleRecord}"
-                    mode="EDIT"
+                    fields="Id,Name,Comments__c"
+                    targetFields="{!v.simpleRecord}"                    
                     targetError="{!v.recordError}" 
                     recordUpdated = "{!c.handleRecordUpdated}"/>
     
     <lightning:card aura:id="recordCard" title="Crear nueva nota"> 
-        <div class="slds-p-horizontal--small">
-            <lightning:input aura:id="recordField" label="Nombre" value="{!v.simpleRecord.Name}" required="true"/>
-            <lightning:textarea aura:id="recordField" label="Nota" value="{!v.simpleRecord.Comments__c}"/>
-            <br/>
-            <lightning:button label="Guardar" variant="brand" onclick="{!c.handleSave}"/>
-
+        <aura:set attribute="actions">
+            <aura:if isTrue="{! v.actionType == 'read'}">
+                <lightning:button label="Modificar" onclick="{!c.handleEdit}"/>
+            </aura:if>            
             <aura:if isTrue="{!v.type == 'Lista'}">
-                <c:Tasks user="{!v.user}"></c:Tasks>
+                <lightning:button label="Compartir"/>
+            </aura:if>
+        </aura:set>
+        <div class="slds-p-horizontal--small">
+            <lightning:input aura:id="recordField" label="Nombre" value="{!v.simpleRecord.Name}" required="true" readonly="{!v.actionType == 'read'}"/>
+            <lightning:textarea aura:id="recordField" label="Nota" value="{!v.simpleRecord.Comments__c}" readonly="{!v.actionType == 'read'}"/>
+            <br/>
+
+            <aura:if isTrue="{! v.actionType == 'new' || v.actionType == 'edit'}">
+                <lightning:button label="Guardar" variant="brand" onclick="{!c.handleSave}"/>
+            </aura:if>
+            <aura:if isTrue="{! v.actionType == 'edit'}">
+                <lightning:button label="Finalizar" variant="brand" onclick="{!c.handleFinish}"/>
             </aura:if>
             
-
+            <aura:if isTrue="{!v.type == 'Lista'}">
+                <c:Tasks user="{!v.user}"></c:Tasks>
+            </aura:if>            
         </div>
-
-    </lightning:card>
-
-    
+    </lightning:card>    
     
     <aura:if isTrue="{!not(empty(v.noteError))}">
         <div class="recordError">
