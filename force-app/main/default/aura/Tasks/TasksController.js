@@ -1,4 +1,30 @@
 ({
+    onInit : function(component, event, helper) {
+        // Get the empApi component
+        const empApi = component.find('empApi');        
+
+        const channel = '/event/TaskEvent__e';
+        // Replay option to get new events
+        const replayId = -1;        
+        empApi.subscribe(channel, replayId, $A.getCallback(eventReceived => {                      
+            if (component.get('v.actionType') == 'read'){
+                var payLoad = eventReceived.data.payload;
+                if (payLoad.UserId__c != component.get('v.user').Id && payLoad.ParentId__c == component.get('v.parentId')){
+                    console.log('Getting tasks');
+                    helper.getTasks(component,event);
+                }
+                console.log('Received task event', JSON.stringify(payLoad));  
+                console.log('Parent Id component',component.get('v.parentId'));
+            }                                    
+        }))
+        .then(subscription => {
+            // Confirm that we have subscribed to the event channel.
+            // We haven't received an event yet.
+            console.log('Subscribed to channel ', subscription.channel);                        
+        });
+        
+        
+    },
     handleRetrieveTasksEvent : function(component, event, helper) {
         var parentId = event.getParam('parentId');
         component.set('v.parentId',parentId);

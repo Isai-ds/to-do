@@ -12,6 +12,8 @@
     <aura:handler event="c:newTasksEvent" action="{!c.handleNewTasksEvent}"/>
     <aura:handler event="c:addOnlyTaskEvent" action="{!c.handlerOnSaveTask}"/>
 
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}"/>
+    <lightning:empApi aura:id="empApi" />
 
     <aura:registerEvent name="onSaveTask" type="c:addOnlyTaskEvent"/>
 

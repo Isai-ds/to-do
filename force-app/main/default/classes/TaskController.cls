@@ -19,7 +19,7 @@ public with sharing class TaskController {
         t.Name = subject;
         t.Status__c = status;
         update t;    
-        TaskPlatformEvent.publishDeletedEvent(recordId, t.List__c);        
+        TaskPlatformEvent.publishUpdatedEvent(recordId, t.List__c);        
         return t;    
     } 
 
