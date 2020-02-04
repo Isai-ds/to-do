@@ -5,6 +5,13 @@ public with sharing class TaskController {
     }  
 
     @AuraEnabled        
+    public static void publishRecordCreation (String recordId){        
+        Task__c t = getTask(recordId);        
+        TaskPlatformEvent.publishCreatedEvent(recordId, t.List__c);
+        
+    }
+
+    @AuraEnabled        
     public static Map<String,Object> lockingTask (String recordId){        
         Task__c t = getTask(recordId);
         Map<String,Object> result = RecordController.lockingContainer(t.List__c);        

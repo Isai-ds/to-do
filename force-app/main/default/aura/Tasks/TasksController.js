@@ -45,6 +45,7 @@
                 task = JSON.parse(JSON.stringify(task));
                 data.push(task);                            
                 component.set('v.data',data);
+                helper.publishEventNotification(component,task.Id);
             });
         }else{          
             helper.fireOnlyTaskEvent(component);
