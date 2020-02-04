@@ -55,7 +55,14 @@
         console.log('Creating from task -> parent', event.getParam('parentId'));
         if (event.getParam('parentId')){
             component.set('v.parentId',event.getParam('parentId'));
-            helper.handleSave(component,event,helper);
+            helper.handleSave(component,event,helper, function(){                
+                var data = component.get('v.data');
+                var task = component.get('v.simpleTask');
+                task = JSON.parse(JSON.stringify(task));
+                data.push(task);                            
+                component.set('v.data',data);
+                helper.publishEventNotification(component,task.Id);
+            });
         }
     },
     handlerDelete : function(component, event, helper) {            
