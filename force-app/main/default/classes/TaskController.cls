@@ -14,20 +14,20 @@ public with sharing class TaskController {
     
     @AuraEnabled        
     public static Task__c saveTask (String recordId, String subject, String status){
-        Task__c t = new Task__c();
+        Task__c t = getTask (recordId);        
         t.Id = recordId;
         t.Name = subject;
         t.Status__c = status;
         update t;    
+        TaskPlatformEvent.publishDeletedEvent(recordId, t.List__c);        
         return t;    
     } 
 
     @AuraEnabled        
     public static void deleteTask (String recordId){
-        Task__c t = new Task__c();
-        t.Id = recordId;
+        Task__c t = getTask (recordId);        
         delete t;
-        
+        TaskPlatformEvent.publishDeletedEvent(recordId, t.List__c);        
     }
 
     private static Task__c getTask (String recordId){

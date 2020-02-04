@@ -23,8 +23,11 @@
             if (response.getState() == 'SUCCESS'){       
                 console.log('locking...',response.getReturnValue());                
                 var result = response.getReturnValue();
-                component.set('v.data',result.task);                 
-                if (result.isBlocked){
+                component.set('v.data',result.task);                                        
+
+                if (result.hasOwnProperty('IsDeleted')){
+                    helper.saveMessage('Eliminación','La lista fue eliminada por otro usuario',true);
+                }else if (result.isBlocked){
                     helper.lockMessage(result.LastBlockedBy.Name);
                 }else{
                     if (callback){
@@ -101,12 +104,12 @@
         });
         deleteTaskEvent.fire();
     },
-    saveMessage : function (title,message){        
+    saveMessage : function (title,message, error){        
         var resultsToast = $A.get('e.force:showToast');
         resultsToast.setParams({
             'title': title,
             'message': message,
-            'type' : 'success'
+            'type' : (error) ? 'error' : 'success'
         });
         resultsToast.fire();
     },
