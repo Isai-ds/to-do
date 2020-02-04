@@ -153,13 +153,12 @@
     <enableSharing>true</enableSharing>
     <enableStreamingApi>true</enableStreamingApi>
     <gender>Feminine</gender>
-    <label>Version</label>
+    <label>Tarea</label>
     <nameField>
-        <displayFormat>V-{0000}</displayFormat>
-        <label>Nombre de Versiones</label>
-        <type>AutoNumber</type>
+        <label>Nombre de Tarea</label>
+        <type>Text</type>
     </nameField>
-    <pluralLabel>Versiones</pluralLabel>
+    <pluralLabel>Tareas</pluralLabel>
     <searchLayouts/>
     <sharingModel>ReadWrite</sharingModel>
     <visibility>Public</visibility>

@@ -11,14 +11,14 @@
         <valueSetDefinition>
             <sorted>false</sorted>
             <value>
-                <fullName>Borrador</fullName>
+                <fullName>En progreso</fullName>
                 <default>false</default>
-                <label>Borrador</label>
+                <label>En progreso</label>
             </value>
             <value>
-                <fullName>Aprovado</fullName>
+                <fullName>Terminado</fullName>
                 <default>false</default>
-                <label>Aprovado</label>
+                <label>Terminado</label>
             </value>
         </valueSetDefinition>
     </valueSet>
