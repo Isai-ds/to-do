@@ -1,10 +1,16 @@
 public with sharing class RecordController {
     
     @AuraEnabled
-    public static void publishRecordCreation (){
-        ContainerEvent__e event = new ContainerEvent__e();
-        List<Database.SaveResult> results = EventBus.publish(new List<ContainerEvent__e>{event});
+    public static void publishRecordCreation (String recordId, String eventType){
+        if (eventType == RecordPlatformEvent.CREATED_EVENT){
+            RecordPlatformEvent.publishCreatedEvent(recordId);            
+        }
+        else if (eventType == RecordPlatformEvent.DELETED_EVENT){
+            RecordPlatformEvent.publishDeletedEvent(recordId);
+        }        
+
     }
+
     @AuraEnabled
     public static User getCurrentUser(){
         return ListController.getCurrentUser();
@@ -12,25 +18,27 @@ public with sharing class RecordController {
 
     @AuraEnabled        
     public static Map<String,Object> lockingContainer (String recordId){
-        Map<String,Object> result = new Map<String,Object>();        
-        Container__c record = getRecord(recordId);
-        result.put('isBlocked',true);         
+        Map<String,Object> result = new Map<String,Object>();   
+        try{
+            Container__c record = getRecord(recordId);
+            result.put('isBlocked',true);         
 
-        if (timeUnlockRecord(record)){
-            unlockRecord(record);            
-        }
-        if (String.isBlank(record.LastBlockedBy__c)){
-            lockContainer(record);
-            result.put('isBlocked',false);
-        }else if (record.LastBlockedBy__c == UserInfo.getUserId()){
-            result.put('isBlocked',false);
-        }
-        result.put('LastBlockedBy',record.LastBlockedBy__r);
-        
+            if (timeUnlockRecord(record)){
+                unlockRecord(record);            
+            }
+            if (String.isBlank(record.LastBlockedBy__c)){
+                lockContainer(record);
+                result.put('isBlocked',false);
+            }else if (record.LastBlockedBy__c == UserInfo.getUserId()){
+                result.put('isBlocked',false);
+            }
+            result.put('LastBlockedBy',record.LastBlockedBy__r);
+        }catch (System.QueryException qe){
+            result.put('IsDeleted',true);
+        }                     
         return result;
     }
     private static Boolean timeUnlockRecord (Container__c record){ 
-        System.debug('t.LastBlockedDate__c->'+record.LastBlockedDate__c);
         Boolean unlock = false;
         if (record.LastBlockedDate__c != null){
             Long timeLastBlockedDate = record.LastBlockedDate__c.getTime(); 
@@ -45,12 +53,14 @@ public with sharing class RecordController {
         record.LastBlockedBy__c = UserInfo.getUserId();
         record.LastBlockedDate__c = System.DateTime.now();
         update record;
+        RecordPlatformEvent.publishLockedEvent(record.Id);
     }
     private static void unlockRecord (Container__c record){
-        System.debug('unlocking...'+record.Id);        
         record.LastBlockedBy__c = null;
         record.LastBlockedDate__c = null;
         update record; 
+        RecordPlatformEvent.publishUnlockedEvent(record.Id);
+
     }
 
     @AuraEnabled        

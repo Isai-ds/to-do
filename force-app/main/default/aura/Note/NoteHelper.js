@@ -1,6 +1,8 @@
 ({
     NOTE_OPTION : 'Nota',
     LIST_OPTION : 'Lista',
+    CREATED_EVENT : 'created',
+    DELETED_EVENT : 'deleted',
     newRecord : function(component,helper) {
         component.find('recordData').getNewRecord(
             'Container__c', 
@@ -27,10 +29,11 @@
     },
     handleSave: function(component, event, helper,callback) {  
         component.set('v.simpleRecord.Type__c', component.get('v.type'));
-      
+        
         component.find('recordData').saveRecord($A.getCallback(function(saveResult) {
-            if (saveResult.state === 'SUCCESS' || saveResult.state === 'DRAFT') {                
-                helper.saveMessage('Actualización','La '+component.get('v.type').toLowerCase()+ ' se ha actualizado correctamente');  
+            if (saveResult.state === 'SUCCESS' || saveResult.state === 'DRAFT') {      
+                helper.saveMessage('Actualización','La '+component.get('v.type').toLowerCase()+ ' se actualizó correctamente');             
+
                 if (callback){
                     callback(saveResult);                    
                 }                                          
@@ -43,7 +46,7 @@
             }
         }));        
     },    
-    handleDelete: function(component, event, helper) {
+    handleDelete: function(component) {
         component.find('recordData').deleteRecord($A.getCallback(function(deleteResult) {        
             if (deleteResult.state === 'SUCCESS' || deleteResult.state === 'DRAFT') {                
                 console.log('Record is deleted.');
@@ -56,8 +59,13 @@
             }
         }));
     },
-    publishEventNotification : function (component){
+    publishEventNotification : function (component,eventType){
+        console.log('pubkishin......');
         var action = component.get('c.publishRecordCreation');
+        action.setParams({
+            'recordId' : component.get('v.recordId'),
+            'eventType' : eventType
+        });
         action.setCallback(this,$A.getCallback(function(response) {
             if (response.getState() == 'ERROR'){
                 var errors = response.getError();
@@ -73,12 +81,12 @@
         }));
         $A.enqueueAction(action);
     },
-    saveMessage : function (title,message){        
+    saveMessage : function (title,message,error){        
         var resultsToast = $A.get('e.force:showToast');
         resultsToast.setParams({
             'title': title,
             'message': message,
-            'type' : 'success'
+            'type' : (error) ? 'error' : 'success'
         });
         resultsToast.fire();
     },
@@ -184,9 +192,11 @@
     },
     checkingContainer : function (component,helper,callback){
         helper.lockingContainer(component,helper,function(response){
-            console.log('locking...',response.getReturnValue());        
-            var result = response.getReturnValue();            
-            if (result.isBlocked){
+            var result = response.getReturnValue();      
+            if (result.hasOwnProperty('IsDeleted')){
+                helper.saveMessage('Eliminación','La '+component.get('v.type').toLowerCase()+ ' fue eliminada por otro usuario',true);
+                helper.newRecordActions(component,helper);
+            }else if (result.isBlocked){
                 helper.lockMessage(result.LastBlockedBy.Name);
             }else{
                 callback(result);
@@ -196,6 +206,16 @@
     deleteRecordPostAction : function(component,helper,parameters){
         console.log('parameters',parameters);
         console.log('record deleted',component.get('v.recordId'));
-        
+        helper.saveMessage('Eliminación','La '+component.get('v.type').toLowerCase()+ ' se eliminó correctamente'); 
+        helper.newRecordActions(component,helper);
+    },
+    newRecordActions : function(component,helper){
+        component.set('v.recordId','')
+        component.set('v.actionType','new');
+        component.find('recordCard').set('v.title','Crear nueva '+component.get('v.type').toLowerCase());
+        helper.newRecord(component,helper);
+        if (component.get('v.type')== helper.LIST_OPTION){
+            helper.fireNewTasksEvent();
+        }
     }
 })

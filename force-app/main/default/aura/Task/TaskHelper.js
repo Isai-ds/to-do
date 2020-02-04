@@ -79,6 +79,7 @@
         action.setCallback(this, $A.getCallback(function(response){
             if (response.getState() == 'SUCCESS'){                
                 helper.saveMessage('Eliminación','La tarea se eliminó correctamente');
+                helper.fireDeleteTaskEvent(component);
             }else if (response.getState() == 'ERROR'){
                 var errors = response.getError();
                 if (errors) {
@@ -91,6 +92,14 @@
             }
         }));
         $A.enqueueAction(action);
+    },
+    fireDeleteTaskEvent : function(component){
+        console.log('fire.....');
+        var deleteTaskEvent = component.getEvent("onDeleteTask");
+        deleteTaskEvent.setParams({
+            'task' : component.get('v.data')
+        });
+        deleteTaskEvent.fire();
     },
     saveMessage : function (title,message){        
         var resultsToast = $A.get('e.force:showToast');

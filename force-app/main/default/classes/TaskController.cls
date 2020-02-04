@@ -31,7 +31,9 @@ public with sharing class TaskController {
     }
 
     private static Task__c getTask (String recordId){
+        System.debug('recordId->'+recordId);
         return [SELECT Id, Name, List__c,ActivityDate__c, Status__c, OwnerId, Owner.Name FROM Task__c WHERE  Id =: recordId];
+
     }
 
 }

@@ -4,7 +4,8 @@
     <aura:attribute name="actionType" type="String" default="edit"/>    
     <aura:attribute name="user" type="User" /> 
 
-    <aura:handler name="init" value="{!this}" action="{!c.onInit}"/>    
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}"/>  
+    <aura:registerEvent name="onDeleteTask"  type="c:deleteTaskEvent" />
     
     <li>
         <fieldset class="slds-form-element slds-form-element_compound">

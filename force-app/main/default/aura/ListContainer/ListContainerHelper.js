@@ -26,7 +26,7 @@
             record.OwnerName = record.Owner.Name;
             helper.getIcon(component,record);
         });
-        component.set('v.data',records);
+        component.set('v.data',records);        
     },
     getIcon : function(component,record) {
         if (record.isBlocked__c){      
@@ -97,17 +97,13 @@
     subscribe : function(component, event, helper) {
         // Get the empApi component
         const empApi = component.find('empApi');        
-        empApi.setDebugFlag(true);
 
         const channel = '/event/ContainerEvent__e';
         // Replay option to get new events
-        const replayId = -1;
-        
-
-        empApi.subscribe(channel, replayId, $A.getCallback(eventReceived => {            
-            console.log('Received event2  ', eventReceived.data.payload.CreatedById);
-            
-            helper.getNotesLists(component,event);
+        const replayId = -1;        
+        empApi.subscribe(channel, replayId, $A.getCallback(eventReceived => {                                   
+            helper.getNotesLists(component,helper);
+            console.log('Received event', JSON.stringify(eventReceived.data.payload));  
 
         }))
         .then(subscription => {

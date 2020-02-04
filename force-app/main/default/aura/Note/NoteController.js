@@ -9,7 +9,7 @@
                 if (!component.get('v.recordId')){
                     helper.newRecord(component,helper);          
                 }                
-                helper.publishEventNotification(component);      
+                helper.publishEventNotification(component,helper.CREATED_EVENT);      
             });                    
         }else{                        
             if (!component.get('v.recordId')){                                
@@ -19,7 +19,7 @@
                     helper.setRecordToEdit(component,saveResult.recordId);   
                     component.set('v.actionType','edit');
                     helper.lockingContainer(component,helper,function(response){                         
-                        helper.publishEventNotification(component);                                                      
+                        helper.publishEventNotification(component,helper.CREATED_EVENT);                                                      
                     });
                 });    
             }else{                                
@@ -30,13 +30,7 @@
         }                                
     },
     newRecord : function(component, event, helper) {
-        component.set('v.recordId','')
-        component.set('v.actionType','new');
-        component.find('recordCard').set('v.title','Crear nueva '+component.get('v.type').toLowerCase());
-        helper.newRecord(component,helper);
-        if (component.get('v.type')== helper.LIST_OPTION){
-            helper.fireNewTasksEvent();
-        }
+        helper.newRecordActions(component,helper);
     },
     loadRecord : function(component,event,helper) {
         var recordId = event.getParam('arguments').recordId; 
@@ -47,10 +41,8 @@
     },
     handleRecordUpdated: function(component, event, helper) {
         var eventParams = event.getParams();
-        if(eventParams.changeType === "CHANGED") {
-            var changedFields = eventParams.changedFields;
-            console.log('Fields that are changed: ' + JSON.stringify(changedFields));            
-        }else if(eventParams.changeType === 'REMOVED') {
+        if(eventParams.changeType === 'REMOVED') {
+            helper.publishEventNotification(component,helper.DELETED_EVENT);
             helper.deleteRecordPostAction(component,helper,eventParams);
         } 
     },
@@ -58,11 +50,10 @@
         if (!event.getParam('parentId')){
             helper.handleSave(component,event,helper,function(saveResult){                
                 helper.fireOnlyTaskEvent(saveResult.recordId);    
-
                 helper.setRecordToEdit(component,saveResult.recordId);  
                 component.set('v.actionType','edit');                
                 helper.lockingContainer(component,helper,function(response){                         
-                    helper.publishEventNotification(component);                                                      
+                    helper.publishEventNotification(component,helper.CREATED_EVENT);                                                      
                 });
             });
         }
@@ -83,7 +74,7 @@
     },    
     handleDelete : function (component,event,helper){                        
         helper.checkingContainer(component,helper,function(result){                
-                            
+            helper.handleDelete(component);
         });                    
     },
 })

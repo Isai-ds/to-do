@@ -15,11 +15,15 @@
         helper.fireNewRecordEvent(type);
     },    
     getSelectedRows : function(component,event,helper){
-        var selectedRows = event.getParam('selectedRows')[0];      
-        var type = helper.LIST_OPTION;        
-        if (selectedRows.Type__c == 'Nota'){
-            type =  helper.NOTE_OPTION;
+        
+        var selectedRows = event.getParam('selectedRows');              
+        if (selectedRows.length){
+            var type = helper.LIST_OPTION;        
+            if (selectedRows[0].Type__c == 'Nota'){
+                type =  helper.NOTE_OPTION;
+            }
+            helper.fireSelectedRecordEvent(type,selectedRows[0].Id);
         }
-        helper.fireSelectedRecordEvent(type,selectedRows.Id);
+        
     }
 })

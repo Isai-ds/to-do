@@ -52,11 +52,13 @@
         component.set('v.simpleTask.List__c', component.get('v.parentId'));
         component.set('v.simpleTask.Status__c', 'En progreso');
         component.find('recordData').saveRecord($A.getCallback(function(saveResult) {
-            if (saveResult.state === 'SUCCESS' || saveResult.state === 'DRAFT') {                                
-                helper.newRecord(component);
+            if (saveResult.state === 'SUCCESS' || saveResult.state === 'DRAFT') {         
                 if (callback){
                     callback();             
-                }                
+                }
+                helper.newRecord(component);
+                helper.saveMessage();                
+                                
             } else if (saveResult.state === 'INCOMPLETE') {
                 console.log('User is offline, device doesn\'t support drafts.');
             } else if (saveResult.state === 'ERROR') {
@@ -69,8 +71,9 @@
     saveMessage : function (){        
         var resultsToast = $A.get('e.force:showToast');
         resultsToast.setParams({
-            'title': 'Guardado',
-            'message': 'La tarea sea ha agregado correctamente'
+            'title': 'Creación',
+            'message': 'La tarea se creó correctamente',
+            'type': 'success'
         });
         resultsToast.fire();
     },
