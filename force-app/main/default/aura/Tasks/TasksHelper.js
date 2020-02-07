@@ -1,10 +1,7 @@
 ({    
-    getTasks : function(component,event) {
+    getTasks : function(component,event) {    
 
-        //Hacemos que aparezca un icono de carga
-       // component.find('tasks').set('v.isLoading',true);
-
-        //realizamos la llamada a nuestro backend para obtener las notas y listas
+        //realizamos la llamada a nuestro backend para obtener las tareas
         var action = component.get('c.getTasks');
         action.setParams({
             'recordId' : component.get('v.parentId')

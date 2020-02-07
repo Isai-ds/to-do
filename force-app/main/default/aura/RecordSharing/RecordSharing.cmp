@@ -1,0 +1,29 @@
+<aura:component controller="SharingController">
+    <aura:registerEvent name="closeSharing" type="c:closeSharingWindowEvent"/> 
+    <aura:attribute name="selectedValue" type="String"/>
+    <aura:attribute name="data" type="Object"/>
+    <aura:handler name="init" value="{!this}" action="{!c.onInit}" />
+
+    <aura:attribute name="options" type="List"/>
+    <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+        <header class="slds-modal__header">
+            <lightning:buttonIcon iconName="utility:close" alternativeText="Cerrar" onclick="{!c.handlerClose}" class="slds-modal__close" variant="bare-inverse"/>
+            <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">Compartir nota / lista</h2>            
+        </header>
+        <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+            <lightning:select name="users" label="Selecciona un usuario" aura:id="users" value="{!v.selectedValue}" required="true">
+                <option text="-- Elija un usario --" value=""/>
+                <aura:iteration items="{!v.options}" var="option">
+                    <option text="{!option.label}" value="{!option.value}"/>
+                </aura:iteration>
+            </lightning:select>
+        </div>
+        <footer class="slds-modal__footer">
+            <lightning:button label="Cancelar" onclick="{!c.handlerClose}" />
+            <lightning:button label="Guardar" onclick="{!c.handlerSave}" variant="brand"/>
+        </footer>
+        </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+</aura:component>	

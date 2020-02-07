@@ -22,6 +22,10 @@ public with sharing class RecordPlatformEvent {
         ContainerEvent__e event = newEvent(recordId,CREATED_EVENT);            
         publish(event);        
     }
+    public static void publishSharedEvent (String recordId){
+        ContainerEvent__e event = newEvent(recordId,SHARED_EVENT);            
+        publish(event);        
+    }
 
     private static ContainerEvent__e newEvent (String recordId, String name){
         ContainerEvent__e event = new ContainerEvent__e();

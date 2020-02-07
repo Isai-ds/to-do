@@ -77,4 +77,10 @@
             helper.handleDelete(component,helper);
         });                    
     },
+    handlerShare : function (component,event,helper){                        
+        component.set('v.toShare',true);
+    },
+    hanlerCloseSharing : function (component,event,helper){                        
+        component.set('v.toShare',false);
+    },
 })

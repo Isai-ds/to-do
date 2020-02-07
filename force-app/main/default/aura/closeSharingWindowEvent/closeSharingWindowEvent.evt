@@ -1,0 +1,1 @@
+<aura:event type="COMPONENT" description="Se dispara cuado el componente es cerrado o candelado"/>

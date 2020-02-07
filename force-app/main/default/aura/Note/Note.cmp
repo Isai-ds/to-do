@@ -2,6 +2,8 @@
     <aura:attribute name="type" type="String" default="Nota"/>
     <aura:attribute name="user" type="User"/>
     <aura:attribute name="actionType" type="String" default="new"/>    
+    <aura:attribute name="toShare" type="Boolean" default="false"/>    
+
 
     <aura:attribute name="record" type="Object"/>
     <aura:attribute name="simpleRecord" type="Object"/>
@@ -28,7 +30,7 @@
                 <lightning:button label="Modificar" onclick="{!c.handleEdit}" iconName="utility:edit"/>
             </aura:if>            
             <aura:if isTrue="{!and(v.actionType == 'edit',v.type == 'Lista')}">
-                <lightning:button label="Compartir" iconName = "utility:share"/>
+                <lightning:button label="Compartir" iconName = "utility:share" onclick="{!c.handlerShare}"/>
             </aura:if>
         </aura:set>
         <div class="slds-p-horizontal--small">
@@ -49,6 +51,12 @@
             </aura:if>            
         </div>
     </lightning:card>    
+
+    <aura:if isTrue="{!v.toShare}">
+        <c:RecordSharing data="{!v.simpleRecord}" closeSharing="{!c.hanlerCloseSharing}"/>
+    </aura:if>
+    
+    
     
     <aura:if isTrue="{!not(empty(v.noteError))}">
         <div class="recordError">
