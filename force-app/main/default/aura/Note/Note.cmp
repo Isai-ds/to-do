@@ -19,7 +19,7 @@
 
     <force:recordData aura:id="recordData"
                     recordId="{!v.recordId}"
-                    fields="Id,Name,Comments__c"
+                    fields="Id,Name,Comments__c,OwnerId"
                     targetFields="{!v.simpleRecord}"                    
                     targetError="{!v.recordError}" 
                     recordUpdated = "{!c.handleRecordUpdated}"/>
@@ -30,7 +30,7 @@
                 <lightning:button label="Modificar" onclick="{!c.handleEdit}" iconName="utility:edit"/>
             </aura:if>            
             <aura:if isTrue="{!and(v.actionType == 'edit',v.type == 'Lista')}">
-                <lightning:button label="Compartir" iconName = "utility:share" onclick="{!c.handlerShare}"/>
+                <lightning:button label="Compartir" iconName = "utility:share" onclick="{!c.handlerShare}" disabled="{!v.user.Id != v.simpleRecord.OwnerId}"/>
             </aura:if>
         </aura:set>
         <div class="slds-p-horizontal--small">

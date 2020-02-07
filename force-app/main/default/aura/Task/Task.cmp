@@ -28,7 +28,7 @@
                     <div class="slds-size_3-of-12">                        
                         <aura:if isTrue="{! not(v.edit)}">
                             <lightning:buttonIcon aura:id="edit" iconName="utility:edit" onclick="{! c.handleEdit }" alternativeText="Modificar" disabled="{!v.actionType == 'read'}"/>
-                            <lightning:buttonIcon aura:id="delete" iconName="utility:delete" onclick="{! c.handleDelete }" alternativeText="Eliminar" disabled="{!v.actionType == 'read'}"/>                                
+                            <lightning:buttonIcon aura:id="delete" iconName="utility:delete" onclick="{! c.handleDelete }" alternativeText="Eliminar" disabled="{!or (v.actionType == 'read',v.data.OwnerId != v.user.Id)}"/>                                
                             <aura:set attribute="else">
                                 <lightning:buttonIcon iconName="utility:save" onclick="{! c.handleSave }" alternativeText="Guardar" />
                                 <lightning:buttonIcon iconName="utility:close" onclick="{! c.handleClose }" alternativeText="Cerrar" />                                    
