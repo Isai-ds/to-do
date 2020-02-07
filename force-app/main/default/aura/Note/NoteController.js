@@ -44,7 +44,7 @@
         if(eventParams.changeType === 'REMOVED') {
             helper.publishEventNotification(component,helper.DELETED_EVENT);
             helper.deleteRecordPostAction(component,helper,eventParams);
-        } 
+        }
     },
     handlerOnSaveTask : function (component,event,helper){
         if (!event.getParam('parentId')){
@@ -74,7 +74,7 @@
     },    
     handleDelete : function (component,event,helper){                        
         helper.checkingContainer(component,helper,function(result){                
-            helper.handleDelete(component);
+            helper.handleDelete(component,helper);
         });                    
     },
 })
