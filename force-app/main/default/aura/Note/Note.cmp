@@ -42,7 +42,7 @@
                 <lightning:button iconName="utility:save" label="Guardar" variant="brand" onclick="{!c.handleSave}"/>
             </aura:if>
             <aura:if isTrue="{! v.actionType == 'edit'}">
-                <lightning:button label="Eliminar" variant="destructive" iconName="utility:delete" onclick="{!c.handleDelete}"/>
+                <lightning:button label="Eliminar" variant="destructive" iconName="utility:delete" onclick="{!c.handleDelete}" disabled="{!v.user.Id != v.simpleRecord.OwnerId}"/>
                 <lightning:button label="Finalizar" variant="success" iconName="utility:close"  onclick="{!c.handleFinish}"/>                
             </aura:if>
             
